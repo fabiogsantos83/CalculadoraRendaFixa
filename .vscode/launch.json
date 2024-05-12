@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "calculadora_renda_fixa",
+            "cwd": "src\\calculadora_renda_fixa",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "calculadora_renda_fixa (profile mode)",
+            "cwd": "src\\calculadora_renda_fixa",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "calculadora_renda_fixa (release mode)",
+            "cwd": "src\\calculadora_renda_fixa",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
