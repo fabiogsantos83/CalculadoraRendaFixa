@@ -1,4 +1,5 @@
 import 'package:calculadora_renda_fixa/Enitties/income_tax_regressive_table.dart';
+import 'package:calculadora_renda_fixa/Helpers/compound_interest_calculator.dart';
 
 class IncomeTax {
   List<IncomeTaxRegressiveTable> incomeTaxRegressiveTable = [];
@@ -17,9 +18,9 @@ class IncomeTax {
 
   double CalculateIncomeTax(double value, DateTime expirationDate) {
 
-    final difference = DateTime.now().difference(expirationDate).inDays;
+    final difference = expirationDate.difference(DateTime.now()).inDays;
     final regressiveTable = incomeTaxRegressiveTable.firstWhere((element) => element.numberDaysStart <= difference && (element.numberDaysEnd == null || element.numberDaysEnd! >= difference));
 
-    return value - ((value*regressiveTable.tax)/100);
+    return roundDouble((value*regressiveTable.tax)/100, 2);
   }
 }

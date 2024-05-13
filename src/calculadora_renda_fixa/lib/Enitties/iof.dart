@@ -1,4 +1,5 @@
 import 'package:calculadora_renda_fixa/Enitties/iof_regressive_table.dart';
+import 'package:calculadora_renda_fixa/Helpers/compound_interest_calculator.dart';
 
 class IOF {
   List<IOFRegressiveTable> iOFRegressiveTable = [];
@@ -45,9 +46,9 @@ class IOF {
 
   double CalculateIOF(double value, DateTime expirationDate) {
 
-    final difference = DateTime.now().difference(expirationDate).inDays;
+    final difference = expirationDate.difference(DateTime.now()).inDays;
     final tax = iOFRegressiveTable.firstWhere((x) => x.numberDays == difference, orElse: ()=> IOFRegressiveTable(difference,0));
 
-    return value - ((value*tax.tax)/100);
+    return roundDouble((value*tax.tax)/100, 2);
   }
 }
