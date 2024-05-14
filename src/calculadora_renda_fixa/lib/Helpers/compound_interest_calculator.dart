@@ -29,6 +29,29 @@ String DoubleToString(double value) {
   return formattedNumber;
 }
 
-double StringToDouble(String value) { 
-  return double.parse(value.replaceAll('.','').replaceAll(',','.'));
+double StringToDouble(String value) {
+  return double.parse(value.replaceAll('.', '').replaceAll(',', '.'));
+}
+
+bool isDate(String value) {
+  if (value.length != 10) {
+    return false;
+  }
+
+  final dateSplit = value.split('/');
+
+  if (dateSplit.length < 3) {
+    return false;
+  }
+
+  final day = int.parse(dateSplit[0]);
+  final month = int.parse(dateSplit[1]);
+  final year = int.parse(dateSplit[2]);
+
+  var dateTemp = DateTime(year, month, day);
+
+  if (dateTemp.day == day && dateTemp.month == month && dateTemp.year == year) {
+    return true;
+  }
+  return false;
 }

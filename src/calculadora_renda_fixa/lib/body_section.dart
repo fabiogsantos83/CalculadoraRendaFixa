@@ -1,4 +1,5 @@
 import 'package:calculadora_renda_fixa/content_investiment.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 typedef MyBuilder = void Function(BuildContext context, void Function() methodFromChild);
@@ -16,13 +17,13 @@ class BodySection extends StatefulWidget {
 }
 
 class BodySectionState extends State<BodySection> {
-  
-  int investmentsCount = 0;
+
+  List<String> items = [];
 
   void createInvestment()
   {
     setState(() {
-      investmentsCount++;      
+      items.add('Item $items');   
     });
   }
 
@@ -32,28 +33,36 @@ class BodySectionState extends State<BodySection> {
     widget.builder.call(context, createInvestment);
 
     return ListView.builder(
-      itemCount: investmentsCount,
+      itemCount: items.length,
       itemBuilder:(context, index){
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-          child: Container(
-            height: 340,
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 36, 36, 36),
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromARGB(255, 255, 255, 255).withOpacity(0.5),
-                  spreadRadius:2,
-                  blurRadius: 5,                  
-                  offset: Offset(0, 0) // changes position of shadow
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child:  ContentInvestiment()
-             ),
+        final item = items[index];
+        return Dismissible(
+           key: Key(item),
+           onDismissed: (direction){
+             setState(() {
+               items.removeAt(index);
+             });
+           },
+           child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            child: Container(              
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 36, 36, 36),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.5),
+                    spreadRadius:2,
+                    blurRadius: 5,                  
+                    offset: Offset(0, 0) // changes position of shadow
+                  ),
+                ],
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(20),
+                child:  ContentInvestiment()
+              ),
+            )
           )
         );
       }

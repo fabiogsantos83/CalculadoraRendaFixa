@@ -21,6 +21,7 @@ class ContentInvestiment extends StatefulWidget {
 
 class ContentInvestimentState extends State<ContentInvestiment> {
 
+  final _formKey = GlobalKey<FormState>();
   String investmentSelected = 'CDB';
   String indexerSelected = 'CDI';
   String typeIndexerSelected = '%';
@@ -40,26 +41,56 @@ class ContentInvestimentState extends State<ContentInvestiment> {
     return value.replaceAll('R\$', '').replaceAll('%', "").replaceAll(' ', '');
   } 
 
+  String? validateDate(value){
+    if (value == null || value.isEmpty) {
+      return '* Campo obrigatório';
+    }
+ 
+    if (!isDate(value)) {
+      return '* Data Inválida';
+    }
+
+    var dateFormated = DateFormat('dd/MM/yyyy').parse(value); 
+
+    if (dateFormated.difference(DateTime.now()).inHours <=0) {
+      return '* Data Inválida';
+    }
+
+    return null;
+  }
+
+   String? validateValue(value){
+    if (value == null || value.isEmpty) {
+      return '* Campo obrigatório';
+    }
+    return null;
+  }
+  
   void calculate()
   {
-    setState(() {
 
-      ContentInvestimentService contentInvestimentService = ContentInvestimentService();
+    if (_formKey.currentState!.validate()) {
+        
+      setState(() {
 
-      EnumFixedIncomeTitle enumFixedIncomeTitle = EnumFixedIncomeTitle.values.firstWhere((e) => e.toString() == ('EnumFixedIncomeTitle.$investmentSelected'));
-      EnumIndexer enumIndexer = EnumIndexer.values.firstWhere((e) => e.toString() == ('EnumIndexer.$indexerSelected'));
+        ContentInvestimentService contentInvestimentService = ContentInvestimentService();
 
-      ContentInvestimentEntity contentInvestimentEntity = contentInvestimentService.Calculate(
-        enumFixedIncomeTitle, 
-        DateFormat('dd/MM/yyyy').parse(expirationDate), 
-        enumIndexer, 
-        typeIndexerSelected, 
-        StringToDouble(replacePrefix(annualQuote)),
-        StringToDouble(replacePrefix(flatRate)), 
-        StringToDouble(replacePrefix(appliedValue)));
+        EnumFixedIncomeTitle enumFixedIncomeTitle = EnumFixedIncomeTitle.values.firstWhere((e) => e.toString() == ('EnumFixedIncomeTitle.$investmentSelected'));
+        EnumIndexer enumIndexer = EnumIndexer.values.firstWhere((e) => e.toString() == ('EnumIndexer.$indexerSelected'));
 
-      finalValue = DoubleToString(contentInvestimentEntity.finalValue);   
-    });
+        ContentInvestimentEntity contentInvestimentEntity = contentInvestimentService.Calculate(
+          enumFixedIncomeTitle, 
+          DateFormat('dd/MM/yyyy').parse(expirationDate), 
+          enumIndexer, 
+          typeIndexerSelected, 
+          StringToDouble(replacePrefix(annualQuote)),
+          StringToDouble(replacePrefix(flatRate)), 
+          StringToDouble(replacePrefix(appliedValue)));
+
+        finalValue = DoubleToString(contentInvestimentEntity.finalValue);   
+      });
+     
+    }
   }
 
   String hintQuote(){
@@ -75,6 +106,7 @@ class ContentInvestimentState extends State<ContentInvestiment> {
   @override
   Widget build(Object context) {
     return Form(
+      key: _formKey,
       child:Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -153,7 +185,7 @@ class ContentInvestimentState extends State<ContentInvestiment> {
                       expirationDate = value;
                     });
                   },
-
+                  validator:(value) => validateDate(value),
                 )
               )              
             ],
@@ -243,6 +275,7 @@ class ContentInvestimentState extends State<ContentInvestiment> {
                       annualQuote = value;
                     });
                   },
+                  validator:(value) => validateValue(value),
                 )
               ),
               SizedBox(width: 20.0),
@@ -263,6 +296,7 @@ class ContentInvestimentState extends State<ContentInvestiment> {
                       flatRate = value;
                     });
                   },
+                  validator:(value) => validateValue(value),
                 )
               ),                
             ]
@@ -286,6 +320,7 @@ class ContentInvestimentState extends State<ContentInvestiment> {
                       appliedValue = value;
                     });
                   },
+                  validator:(value) => validateValue(value)
                 )
               )   
             ],
@@ -309,15 +344,22 @@ class ContentInvestimentState extends State<ContentInvestiment> {
               ),
             ],
           ),
-          SizedBox(height: 5.0),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 1,
-                child: Text('Valor Final - R\$ ' + finalValue, style: TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center)
-              ),
-            ],
+          Visibility(
+            visible: finalValue.isNotEmpty ? true: false,
+            child: const SizedBox(height: 20.0),
+          ),
+          Visibility(
+            visible: finalValue.isNotEmpty ? true: false,
+            child: 
+              Row(            
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text('Valor Final - R\$ ' + finalValue, style: TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center)
+                  ),
+                ],
+              )
           )
         ],
       )
