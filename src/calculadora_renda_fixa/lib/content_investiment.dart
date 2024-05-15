@@ -59,8 +59,16 @@ class ContentInvestimentState extends State<ContentInvestiment> {
     return null;
   }
 
-   String? validateValue(value){
+  String? validateValue(value){
     if (value == null || value.isEmpty) {
+      return '* Campo obrigatório';
+    }
+    return null;
+  }
+
+  String? validatePre(value){
+   
+    if (typeIndexerSelected != 'PRE_FIXADO' && (value == null || value.isEmpty)) {
       return '* Campo obrigatório';
     }
     return null;
@@ -83,7 +91,7 @@ class ContentInvestimentState extends State<ContentInvestiment> {
           DateFormat('dd/MM/yyyy').parse(expirationDate), 
           enumIndexer, 
           typeIndexerSelected, 
-          StringToDouble(replacePrefix(annualQuote)),
+          StringToDouble(annualQuote.isEmpty ? "0" : replacePrefix(annualQuote)),
           StringToDouble(replacePrefix(flatRate)), 
           StringToDouble(replacePrefix(appliedValue)));
 
@@ -167,7 +175,121 @@ class ContentInvestimentState extends State<ContentInvestiment> {
                   }
                 )
               ),
-              SizedBox(width: 20.0), 
+              const SizedBox(width: 20.0), 
+              Expanded(
+                flex: 1,
+                child: DropdownButtonFormField<String>(
+                  style: TextStyle(color: Colors.white),
+                  dropdownColor: const Color.fromARGB(255, 31, 31, 31),
+                  value: typeIndexerSelected,
+                  icon: const Icon(Icons.menu),                  
+                  items: const [
+                    DropdownMenuItem<String> (
+                      value: '%',
+                      child: Text('%'),
+                    ),
+                    DropdownMenuItem<String> (
+                      value: '+',
+                      child: Text('+'),
+                    ),
+                    DropdownMenuItem<String> (
+                      value: 'PRE_FIXADO',
+                      child: Text('Pré Fixado'),
+                    )
+                  ],
+                  onChanged: (value)
+                  {
+                    setState(() {
+                      typeIndexerSelected = value!;                
+                    });
+                  }
+                )
+              )
+            ],
+          ),
+          Visibility(
+            visible: typeIndexerSelected == 'PRE_FIXADO' ? false: true,
+            child: Row (
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [            
+                Expanded(
+                  flex: 1,
+                  child: DropdownButtonFormField<String>(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: const Color.fromARGB(255, 31, 31, 31),
+                    value: indexerSelected,
+                    icon: const Icon(Icons.menu),     
+                                
+                    items: const [
+                      DropdownMenuItem<String> (
+                        value: 'CDI',
+                        child: Text('CDI'),
+                      ),
+                      DropdownMenuItem<String> (
+                        value: 'IPCA',
+                        child: Text('IPCA'),
+                      ),          
+                      DropdownMenuItem<String> (
+                        value: 'SELIC',
+                        child: Text('SELIC'),
+                      )                   
+                    ],
+                    onChanged: (value)
+                    {
+                      setState(() {
+                        indexerSelected = value!;                
+                      });
+                    }
+                  )
+                ),
+                const SizedBox(width: 20.0),
+                Expanded(
+                  flex: 1,
+                  child: TextFormField(
+                    inputFormatters: [Mask.money(moneySymbol: '%')],                  
+                    keyboardType: TextInputType.number,
+                    maxLength: 8,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(                
+                      hintText: 'Cotação Anual',
+                      hintStyle: TextStyle( color: Colors.white.withOpacity(0.2)),
+                      counterText: ""
+                    ),
+                    onChanged: (String value){
+                      setState(() {
+                        annualQuote = value;
+                      });
+                    },
+                    validator:(value) => validatePre(value),
+                  )
+                )
+              ]
+            )
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  inputFormatters: [Mask.money(moneySymbol: '%')],
+                  keyboardType: TextInputType.number,
+                  maxLength: 8,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: hintQuote(),
+                    hintStyle: TextStyle( color: Colors.white.withOpacity(0.2)),
+                    counterText: ""
+                  ),
+                  onChanged: (String value){
+                    setState(() {
+                      flatRate = value;
+                    });
+                  },
+                  validator:(value) => validateValue(value),
+                )
+              ),
+              const SizedBox(width: 20.0),
               Expanded(
                 flex: 1,
                 child: TextFormField(
@@ -188,117 +310,6 @@ class ContentInvestimentState extends State<ContentInvestiment> {
                   validator:(value) => validateDate(value),
                 )
               )              
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 1,
-                child: DropdownButtonFormField<String>(
-                  style: TextStyle(color: Colors.white),
-                  dropdownColor: const Color.fromARGB(255, 31, 31, 31),
-                  value: indexerSelected,
-                  icon: const Icon(Icons.menu),     
-                               
-                  items: const [
-                    DropdownMenuItem<String> (
-                      value: 'CDI',
-                      child: Text('CDI'),
-                    ),
-                    DropdownMenuItem<String> (
-                      value: 'IPCA',
-                      child: Text('IPCA'),
-                    ),          
-                    DropdownMenuItem<String> (
-                      value: 'SELIC',
-                      child: Text('SELIC'),
-                    )                   
-                  ],
-                  onChanged: (value)
-                  {
-                    setState(() {
-                      indexerSelected = value!;                
-                    });
-                  }
-                )
-              ),
-              SizedBox(width: 20.0),
-              Expanded(
-                flex: 1,
-                child: DropdownButtonFormField<String>(
-                  style: TextStyle(color: Colors.white),
-                  dropdownColor: const Color.fromARGB(255, 31, 31, 31),
-                  value: typeIndexerSelected,
-                  icon: const Icon(Icons.menu),                  
-                  items: const [
-                    DropdownMenuItem<String> (
-                      value: '%',
-                      child: Text('%'),
-                    ),
-                    DropdownMenuItem<String> (
-                      value: '+',
-                      child: Text('+'),
-                    ),
-                    DropdownMenuItem<String> (
-                      value: 'Pré',
-                      child: Text('Pré Fixado'),
-                    )
-                  ],
-                  onChanged: (value)
-                  {
-                    setState(() {
-                      typeIndexerSelected = value!;                
-                    });
-                  }
-                )
-              )             
-            ]
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [Mask.money(moneySymbol: '%')],                  
-                  keyboardType: TextInputType.number,
-                  maxLength: 8,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(                
-                    hintText: 'Cotação Anual',
-                    hintStyle: TextStyle( color: Colors.white.withOpacity(0.2)),
-                    counterText: ""
-                  ),
-                  onChanged: (String value){
-                    setState(() {
-                      annualQuote = value;
-                    });
-                  },
-                  validator:(value) => validateValue(value),
-                )
-              ),
-              SizedBox(width: 20.0),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  inputFormatters: [Mask.money(moneySymbol: '%')],
-                  keyboardType: TextInputType.number,
-                  maxLength: 8,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: hintQuote(),
-                    hintStyle: TextStyle( color: Colors.white.withOpacity(0.2)),
-                    counterText: ""
-                  ),
-                  onChanged: (String value){
-                    setState(() {
-                      flatRate = value;
-                    });
-                  },
-                  validator:(value) => validateValue(value),
-                )
-              ),                
             ]
           ),
           Row(
@@ -325,7 +336,7 @@ class ContentInvestimentState extends State<ContentInvestiment> {
               )   
             ],
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
