@@ -47,7 +47,9 @@ class ContentInvestimentService {
     discounts += IOF().CalculateIOF(fees, expirationDate);
     finalValue = grossValue - discounts;
 
+    double percentageNetProfitability =  ((finalValue * 100) / appliedValue) - 100;
+
     return ContentInvestimentEntity(
-        appliedValue, fees, discounts, finalValue);
+        appliedValue, fees, discounts, finalValue, percentageNetProfitability);
   }
 }

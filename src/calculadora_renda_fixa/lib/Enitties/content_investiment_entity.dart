@@ -3,7 +3,8 @@ class ContentInvestimentEntity {
   final double fees;
   final double discounts;
   final double finalValue;
+  final double percentageNetProfitability;
 
   ContentInvestimentEntity(
-      this.appliedValue, this.fees, this.discounts, this.finalValue);
+      this.appliedValue, this.fees, this.discounts, this.finalValue, this. percentageNetProfitability);
 }

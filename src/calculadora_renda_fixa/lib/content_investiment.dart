@@ -30,6 +30,9 @@ class ContentInvestimentState extends State<ContentInvestiment> {
   String appliedValue = '';
   String finalValue = '';
   String annualQuote = '';
+  String netProfitability = '';
+  String percentageNetProfitability = '';
+  String disconts = ''; 
   
     var maskPercent = MaskTextInputFormatter(
     mask: 'R\$ ################################', 
@@ -96,6 +99,9 @@ class ContentInvestimentState extends State<ContentInvestiment> {
           StringToDouble(replacePrefix(appliedValue)));
 
         finalValue = DoubleToString(contentInvestimentEntity.finalValue);   
+        netProfitability = DoubleToString(contentInvestimentEntity.finalValue - contentInvestimentEntity.appliedValue);
+        percentageNetProfitability = DoubleToString(contentInvestimentEntity.percentageNetProfitability);
+        disconts = DoubleToString(contentInvestimentEntity.discounts);
       });
      
     }
@@ -368,6 +374,57 @@ class ContentInvestimentState extends State<ContentInvestiment> {
                   Expanded(
                     flex: 1,
                     child: Text('Valor Final - R\$ ' + finalValue, style: TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center)
+                  ),
+                ],
+              )
+          ),
+          Visibility(
+            visible: finalValue.isNotEmpty ? true: false,
+            child: const SizedBox(height: 10.0),
+          ),
+          Visibility(
+            visible: finalValue.isNotEmpty ? true: false,
+            child: 
+              Row(            
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text('Rentabilidade Liquida - R\$ ' + netProfitability, style: TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center)
+                  ),
+                ],
+              )
+          ),
+          Visibility(
+            visible: finalValue.isNotEmpty ? true: false,
+            child: const SizedBox(height: 10.0),
+          ),
+          Visibility(
+            visible: finalValue.isNotEmpty ? true: false,
+            child: 
+              Row(            
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text('Percentual Rentabilidade - ' + percentageNetProfitability + '%', style: TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center)
+                  ),
+                ],
+              )
+          ),
+          Visibility(
+            visible: finalValue.isNotEmpty ? true: false,
+            child: const SizedBox(height: 10.0),
+          ),
+          Visibility(
+            visible: finalValue.isNotEmpty ? true: false,
+            child: 
+              Row(            
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Text('Descontos - R\$ ' + disconts, style: TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center)
                   ),
                 ],
               )

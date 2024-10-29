@@ -19,7 +19,7 @@ double roundDouble(double value, int places) {
   return ((value * mod).round().toDouble() / mod);
 }
 
-String DoubleToString(double value) {
+String DoubleToString(double? value) {
   final List<Locale> systemLocales = WidgetsBinding.instance.platformDispatcher
       .locales; // Returns the list of locales that user defined in the system settings.
   var defaultLocale = systemLocales.first;
